@@ -11,6 +11,16 @@ from subprocess import PIPE, Popen
 import shodan
 from blessings import Terminal
 
+try:
+    raw_input          # Python 2
+except NameError:
+    raw_input = input  # Python 3
+
+try:
+    xrange          # Python 2
+except NameError:
+    xrange = range  # Python 3
+
 t = Terminal()
 
 # Global vars
@@ -24,7 +34,7 @@ toolbar_width = 60
 
 # Logo
 def logo():
-	print(t.cyan("""
+    print(t.cyan("""
                               _____     _       _____     _     _ _
 #--Author : Vector/NullArray |  _  |_ _| |_ ___|   __|___| |___|_| |_
 #--Twitter: @Real__Vector    |     | | |  _| . |__   | . | | . | |  _|
